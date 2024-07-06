@@ -20,7 +20,7 @@ public class BTreeNode {
         this.minKeys = (order/2) - 1;
         this.keys = new int[maxKeys];
         this.pointers = new BTreeNode[order];
-        this.isLeaf = false;
+        this.isLeaf = true;
         this.isRoot = true;
         this.nunKeys = 0;
         totalNodes = 1;
@@ -66,7 +66,7 @@ public class BTreeNode {
     //si no se pudo insertar (false) es que hay que crear otro nodo
     private boolean insertKey(int key){
         if (this.isLeaf && nunKeys<maxKeys) {
-            insertAndKeepSorted(this.keys,key);
+            this.insertAndKeepSorted(this.keys,key);
             this.nunKeys++;
             return true;
         }
