@@ -1,7 +1,5 @@
 package com.neog14.treewebapp;
 
-import java.util.Arrays;
-
 public class BTreeNode {
     private int order;
     private BTreeNode[] pointers; //Punteros a otros nodos
@@ -52,7 +50,7 @@ public class BTreeNode {
         }else {
             BTreeNode actualNode = this;
             BTreeNode newNode = new BTreeNode(this.order,true);// creo el nuevo nodo para la redistribución
-            int promoted = dividirArreglo(this.nunKeys/2, this.nunKeys,actualNode,newNode);
+            int promoted = divideArray(this.nunKeys/2, this.nunKeys,actualNode,newNode);
             if(this.isRoot){
                 BTreeNode newRootNode = new BTreeNode(this.order,false); //Si el nodo era una raiz tambien necesitare otro nodo para que sea la nueva raiz
                 newRootNode.insert(promoted);
@@ -89,7 +87,7 @@ public class BTreeNode {
     }
 
     //este metodo crea los arreglos para la redistribucion y los asigna a los nodos correspondientes retorna el elemento a promocionar
-    private int dividirArreglo(int firstHalf, int secondHalf, BTreeNode firstNode, BTreeNode secondNode){
+    private int divideArray(int firstHalf, int secondHalf, BTreeNode firstNode, BTreeNode secondNode){
         int[] firstArray = new int[maxKeys];
         int[] secondArray = new int[maxKeys];
         int [] array = firstNode.getKeys();
