@@ -1,5 +1,7 @@
 package com.neog14.treewebapp;
 
+import java.util.Arrays;
+
 public class BTreeNode {
     private int order;
     private BTreeNode[] pointers; //Punteros a otros nodos
@@ -20,16 +22,16 @@ public class BTreeNode {
         this.minKeys = (order/2) - 1;
         this.keys = new int[maxKeys];
         this.pointers = new BTreeNode[order];
-        this.isLeaf = true;
+        this.isLeaf = false;
         this.isRoot = true;
         this.nunKeys = 0;
         totalNodes = 1;
-        numNode = 0;
-        this.root = this;
+        numNode =  totalNodes-1;
+        root = this;
     }
 
     //creacion nuevo nodo
-    public BTreeNode(int order, boolean isLeaf){
+    public BTreeNode(int order, boolean isLeaf, BTreeNode root){
         this.order = order;
         this.maxKeys = order -1;
         this.minKeys = (order/2) - 1;
@@ -39,7 +41,12 @@ public class BTreeNode {
         this.isRoot = !isLeaf;
         totalNodes++;
         numNode = totalNodes-1;
+        if (isRoot)
+            this.root = this;
+        else
+            this.root = root;
     }
+
 
 
     // insertar principal recibe la clave a insertar y si no se puede insertar hay que dividir y redistribuir
@@ -48,11 +55,17 @@ public class BTreeNode {
         if(insertOk){
             System.out.println("El elemento "+key+" se inserto correctamente en el nodo "+this.numNode);
         }else {
+            System.out.println("No hay espacio para insertar el elemento "+key+" se crearan nuevos nodos");
             BTreeNode actualNode = this;
-            BTreeNode newNode = new BTreeNode(this.order,true);// creo el nuevo nodo para la redistribución
-            int promoted = divideArray(this.nunKeys/2, this.nunKeys,actualNode,newNode);
-            if(this.isRoot){
-                BTreeNode newRootNode = new BTreeNode(this.order,false); //Si el nodo era una raiz tambien necesitare otro nodo para que sea la nueva raiz
+            BTreeNode newNode = new BTreeNode(this.order,true,this.root);// creo el nuevo nodo para la redistribución
+
+            int[] splittedArray = Arrays.copyOf(actualNode.getKeys(),this.order);//creo el arreglo con +1 de espacio
+            insertAndKeepSorted(splittedArray,key);//agrego la clave para dividir el arreglo
+
+            int promoted = divideArray(splittedArray,actualNode,newNode);
+            if(actualNode.isRoot){
+                BTreeNode newRootNode = new BTreeNode(this.order,false,this); //Si el nodo era una raiz tambien necesitare otro nodo para que sea la nueva raiz
+                this.setIsRoot(false);//dejara de ser la raiz
                 newRootNode.insert(promoted);
                 //llamada a metodo para agregar elementos al vector de puntero
                 newRootNode.addPointer(actualNode,newNode);
@@ -65,7 +78,7 @@ public class BTreeNode {
 
     //si no se pudo insertar (false) es que hay que crear otro nodo
     private boolean insertKey(int key){
-        if (this.isLeaf && nunKeys<maxKeys) {
+        if ((this.isRoot || this.isLeaf) && nunKeys<maxKeys) {
             this.insertAndKeepSorted(this.keys,key);
             this.nunKeys++;
             return true;
@@ -73,10 +86,10 @@ public class BTreeNode {
         return false;
     }
 
-    private void insertAndKeepSorted(int[] array, int key){
+    public void insertAndKeepSorted(int[] array, int key){
         if(nunKeys>0){
             int i = nunKeys-1;
-            while(i>=0 && array[i]>key){
+            while(i>=0 && array[i]>key && array[i] != key){
                 array[i+1] = array[i];//realizo un corrimiento de los elementos
                 i--;
             }
@@ -87,29 +100,54 @@ public class BTreeNode {
     }
 
     //este metodo crea los arreglos para la redistribucion y los asigna a los nodos correspondientes retorna el elemento a promocionar
-    private int divideArray(int firstHalf, int secondHalf, BTreeNode firstNode, BTreeNode secondNode){
+    //En caso de ser de orden impar el nodo de la izquierda queda siempre con un elemento mas que el nuevo nodo
+    public int divideArray(int[] splitArray, BTreeNode firstNode, BTreeNode secondNode){
         int[] firstArray = new int[maxKeys];
         int[] secondArray = new int[maxKeys];
-        int [] array = firstNode.getKeys();
+
+        int firstHalf = splitArray.length/2;
+        int secondHalf = splitArray.length;
+
+        //int [] array = firstNode.getKeys();
         int value=0;
 
         for (int i=0; i<firstHalf ;i++){
-            firstArray[i] = array[i];
+            firstArray[i] = splitArray[i];
         }
 
-        int promoted = array[firstHalf];//para evitar tener que hacer un corrimiento nuevamente al realizar la promocion en arbol b
+        int promoted = splitArray[firstHalf];//para evitar tener que hacer un corrimiento nuevamente al realizar la promocion en arbol b+
 
         for (int i=firstHalf+1; i<secondHalf ;i++){
-            secondArray[value] = array[i];
+            secondArray[value] = splitArray[i];
             value++;
         }
 
         firstNode.setKeys(firstArray);// seteo el arreglo distribuido
         firstNode.setNunKeys(firstHalf); //seteo el numero de claves que quedan en el primer nodo
 
+        System.out.println(firstNode);
+
         secondNode.setKeys(secondArray);// seteo el arreglo distribuido
         secondNode.setNunKeys((secondHalf-firstHalf)-1);//seteo el numero de claves que quedan en el segundo nodo
+
+        System.out.println(secondNode);
         return promoted;
+    }
+
+    @Override
+    public String toString() {
+        return "BTreeNode{" +
+                "order=" + order +
+                ", pointers=" + Arrays.toString(pointers) +
+                ", keys=" + Arrays.toString(keys) +
+                ", isLeaf=" + isLeaf +
+                ", isRoot=" + isRoot +
+                ", nunKeys=" + nunKeys +
+                ", minKeys=" + minKeys +
+                ", maxKeys=" + maxKeys +
+                ", numNode=" + numNode +
+                ", root=" + root.getNumNode() +
+                '}';
     }
 
     // no se si funciona
@@ -198,5 +236,9 @@ public class BTreeNode {
 
     public void setNumNode(int numNode) {
         this.numNode = numNode;
+    }
+
+    public BTreeNode getRoot() {
+        return root;
     }
 }
