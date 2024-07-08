@@ -63,9 +63,14 @@ public class BTreeNode {
             insertAndKeepSorted(splittedArray,key);//agrego la clave para dividir el arreglo
 
             int promoted = divideArray(splittedArray,actualNode,newNode);
+
             if(actualNode.isRoot){
                 BTreeNode newRootNode = new BTreeNode(this.order,false,this); //Si el nodo era una raiz tambien necesitare otro nodo para que sea la nueva raiz
                 this.setIsRoot(false);//dejara de ser la raiz
+
+                actualNode.setRoot(newRootNode);
+                newNode.setRoot(newRootNode);
+
                 newRootNode.insert(promoted);
                 //llamada a metodo para agregar elementos al vector de puntero
                 newRootNode.addPointer(actualNode,newNode);
@@ -74,6 +79,7 @@ public class BTreeNode {
                 this.root.addPointer(actualNode,newNode);
             }
         }
+
     }
 
     //si no se pudo insertar (false) es que hay que crear otro nodo
@@ -101,7 +107,7 @@ public class BTreeNode {
 
     //este metodo crea los arreglos para la redistribucion y los asigna a los nodos correspondientes retorna el elemento a promocionar
     //En caso de ser de orden impar el nodo de la izquierda queda siempre con un elemento mas que el nuevo nodo
-    public int divideArray(int[] splitArray, BTreeNode firstNode, BTreeNode secondNode){
+    private int divideArray(int[] splitArray, BTreeNode firstNode, BTreeNode secondNode){
         int[] firstArray = new int[maxKeys];
         int[] secondArray = new int[maxKeys];
 
@@ -125,29 +131,57 @@ public class BTreeNode {
         firstNode.setKeys(firstArray);// seteo el arreglo distribuido
         firstNode.setNunKeys(firstHalf); //seteo el numero de claves que quedan en el primer nodo
 
-        System.out.println(firstNode);
+        //System.out.println(firstNode);
 
         secondNode.setKeys(secondArray);// seteo el arreglo distribuido
         secondNode.setNunKeys((secondHalf-firstHalf)-1);//seteo el numero de claves que quedan en el segundo nodo
 
-        System.out.println(secondNode);
+        //System.out.println(secondNode);
         return promoted;
     }
 
     @Override
     public String toString() {
         return "BTreeNode{" +
-                "order=" + order +
-                ", pointers=" + Arrays.toString(pointers) +
-                ", keys=" + Arrays.toString(keys) +
-                ", isLeaf=" + isLeaf +
-                ", isRoot=" + isRoot +
-                ", nunKeys=" + nunKeys +
-                ", minKeys=" + minKeys +
-                ", maxKeys=" + maxKeys +
-                ", numNode=" + numNode +
+                "order=" + order + "\n"+
+                ", pointers=" + Arrays.toString(pointers) + "\n"+
+                ", keys=" + Arrays.toString(keys) + "\n"+
+                ", isLeaf=" + isLeaf + "\n"+
+                ", isRoot=" + isRoot + "\n"+
+                ", nunKeys=" + nunKeys + "\n"+
+                ", minKeys=" + minKeys + "\n"+
+                ", maxKeys=" + maxKeys + "\n"+
+                ", numNode=" + numNode + "\n"+
                 ", root=" + root.getNumNode() +
                 '}';
+    }
+
+    public void printTree() {
+        String treeString = printNode(this.root.getKeys());
+        for(BTreeNode b : root.getPointers()){
+            if(b != null){
+            treeString += "\n"+"|"+
+                    "\n"+"|"+
+                    "\n"+"|"+"\n";
+                treeString += printNode(b.getKeys());
+            }
+
+        }
+        System.out.println(treeString);
+    }
+
+    private String printNode(BTreeNode node){
+        String treeString = "Node: " + this.numNode +": ";
+        for (int i=0; i<this.maxKeys; i++){
+            if(!node.isLeaf){
+                if(node.getPointers()[i] != null){
+                    treeString += node.getPointers()[i].getNumNode() + "(" + node.getKeys()[i] + ")";
+                }
+
+            }
+
+        }
+        return treeString;
     }
 
     // no se si funciona
@@ -240,5 +274,9 @@ public class BTreeNode {
 
     public BTreeNode getRoot() {
         return root;
+    }
+
+    public void setRoot(BTreeNode root) {
+        this.root = root;
     }
 }
