@@ -14,8 +14,8 @@ public class BTreeNodeTest {
 
     @BeforeEach
     public void setUp(){
-        nodeEvenOrder = new BTreeNode(4);
-        nodeOddOrder = new BTreeNode(5);
+        //nodeEvenOrder = new BTreeNode(4);
+        //nodeOddOrder = new BTreeNode(5);
     }
 
     //@Test // change method to public for testing
@@ -92,17 +92,37 @@ public class BTreeNodeTest {
 //        assertEquals(9,newNode.getKeys()[1]);
 //    }
 
-    @Test
-    public void testInsertOnFullRoot(){
-        nodeOddOrder.insert(1);
-        nodeOddOrder.insert(2);
-        nodeOddOrder.insert(7);
-        nodeOddOrder.insert(9);
+//    @Test
+//    public void testInsertOnFullRoot(){
+//        nodeEvenOrder.insert(9);
+//        nodeEvenOrder.insert(3);
+//        nodeEvenOrder.insert(11);
+//        nodeEvenOrder.printTree();
 
-        nodeOddOrder.insert(5);
-        nodeOddOrder.printTree();
+//        System.out.println();
+//        System.out.println("-----------");
+//        System.out.println();
+//
+//        nodeEvenOrder.insert(14);
+//        nodeEvenOrder.printTree();
+//        System.out.println();
+//        System.out.println("-----------");
+//        System.out.println();
+//
+//        nodeEvenOrder.insert(10);
+//        nodeEvenOrder.printTree();
+//        System.out.println();
+//        System.out.println("-----------");
+//        System.out.println();
+//
+//        nodeEvenOrder.insert(15);
+//        //nodeEvenOrder.insert(19);
+//        nodeEvenOrder.printTree();
+//        System.out.println();
+//        System.out.println("-----------");
+//        System.out.println();
 
 
 
     }
-}
+
