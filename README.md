@@ -1,2 +1,2 @@
 # BTreeRepresentation
- A representation o how b tree works
+ A representation of how B AND B+ tree works
