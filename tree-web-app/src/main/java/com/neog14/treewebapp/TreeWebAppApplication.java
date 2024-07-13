@@ -9,5 +9,4 @@ public class TreeWebAppApplication {
     public static void main(String[] args) {
         SpringApplication.run(TreeWebAppApplication.class, args);
     }
-
 }

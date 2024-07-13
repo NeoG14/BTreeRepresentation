@@ -1,147 +1,107 @@
 package com.neog14.treewebapp;
 
+import java.util.Arrays;
+
 public class BTreeNode {
     boolean leaf;
     Integer[] keys;
     BTreeNode[] children;
+    int num_node;
     int num_keys;
-    int max_keys;
-    int min_keys;
-    int t;
 
-    public BTreeNode(boolean leaf, int order){
+    public BTreeNode(boolean leaf, int order, int num_node){
         this.leaf = leaf;
         this.keys = new Integer[order-1];
         this.children = new BTreeNode[order];
         this.num_keys = 0;
-        this.max_keys = order-1;
-        this.t = (order/2);
-        this.min_keys = t-1;
+        this.num_node = num_node;
+
     }
 
+    @Override
+    public String toString() {
+        return "BTreeNode{" + "\n"+
+                "leaf=" + leaf + "\n"+
+                "keys=" + Arrays.toString(keys) + "\n"+
+                "children=" + printChildrens() + "\n"+
+                "num_keys=" + num_keys + "\n"+
+                '}'+ "\n";
+    }
+
+    private String printChildrens() {
+        String childString = "";
+        for (BTreeNode c : children){
+            if(c != null)
+                childString +=  " " + num_node;
+        }
+        return childString;
+    }
 
     public void insert_non_full(Integer key){
-        int i = num_keys - 1;
-        if(this.leaf){
-            while (i > 0 && keys[i] > key){
-                keys[i+1]=keys[i];
-                i--;
+        int i=0;
+        boolean contains = Arrays.stream(keys).anyMatch(key::equals);
+        if (!contains){
+            while(keys[i] != null && key>keys[i]){
+                i++;
             }
-            keys[i+1]=key;
+            for (int j=num_keys; i>j; j--)
+                keys[j] = keys[j-1];
+            keys[i]=key;
             num_keys++;
+            System.out.println("Key " + key +"inserted in node: "+num_node);
         }else {
-            while (i > 0 && keys[i] > key){
-                i--;
-            }
-            if (children[i+1].num_keys ==  max_keys){
-                split_child(i+1, children[i+1]);
-                if (keys[i+1]>key)
-                    i++;
-            }
-            children[i+1].insert_non_full(key);
+            System.out.println("Key "+ key +"already exist in tree");
         }
     }
 
-    public void split_child(int i, BTreeNode left_node){
-        BTreeNode right_node = new BTreeNode(left_node.leaf,t*2);
-        right_node.num_keys = min_keys;
+    public void split_child(BTreeNode left_child, int key){
+        Integer[] aux = Arrays.copyOf(keys,num_keys+1);//copio de keys en aux con +1 de DimF
 
-        for (int j = 0; j < min_keys; j++ ){
-            right_node.keys[j] = left_node.keys[j+t];
+        //agrego ordernado el nuevo elemento en aux
+        int i=0;
+        while(aux[i] != null && key>aux[i]){
+            i++;
         }
+        for (int j=num_keys; i>j; j--)
+            aux[j] = aux[j-1];
+        aux[i]=key;
 
-        if (!left_node.leaf) {
-            for (int j = 0; j < t; j++) {
-                right_node.children[j] = left_node.children[j + t];
-            }
-        }
+        //Logica para dividir el arreglo y promocionar la clave
 
-        left_node.num_keys = min_keys;
-
-        for (int j = num_keys; j >= i + 1; j--) {
-            children[j + 1] = children[j];
-        }
-
-        children[i + 1] = right_node;
-
-        for (int j = num_keys - 1; j >= i; j--) {
-            keys[j + 1] = keys[j];
-        }
-
-        keys[i] = left_node.keys[min_keys];
-        num_keys = num_keys + 1;
     }
 
-
-
-
-//    //Creacion del primer nodo
-//    public BTreeNode(int order){
-//        this.order = order;
-//        this.maxKeys = order -1;
-//        this.minKeys = (order/2) - 1;
-//        this.keys = new int[maxKeys];
-//        this.pointers = new BTreeNode[order];
-//        this.isLeaf = false;
-//        this.isRoot = true;
-//        this.nunKeys = 0;
-//        totalNodes = 1;
-//        numNode =  totalNodes-1;
-//        root = this;
-//    }
-//
-//    //creacion nuevo nodo
-//    public BTreeNode(int order, boolean isLeaf, BTreeNode root){
-//        this.order = order;
-//        this.maxKeys = order -1;
-//        this.minKeys = (order/2) - 1;
-//        this.keys = new int[maxKeys];
-//        this.pointers = new BTreeNode[order];
-//        this.isLeaf = isLeaf;
-//        this.isRoot = !isLeaf;
-//        totalNodes++;
-//        numNode = totalNodes-1;
-//        if (isRoot)
-//            this.root = this;
-//        else
-//            this.root = root;
-//    }
-//
-//
-//
-//    // insertar principal recibe la clave a insertar y si no se puede insertar hay que dividir y redistribuir
-//    public void insert(int key){
-//        boolean insertOk = insertKey(this,key);
-//        if(insertOk){
-//            //System.out.println("El elemento "+key+" se inserto correctamente en el nodo "+this.numNode);
-//        }else {
-//            //System.out.println("No hay espacio para insertar el elemento "+key+" se crearan nuevos nodos");
-//            BTreeNode actualNode = this;
-//            BTreeNode newNode = new BTreeNode(this.order,true,this.root);// creo el nuevo nodo para la redistribución
-//
-//            int[] splittedArray = Arrays.copyOf(actualNode.getKeys(),this.order);//creo el arreglo con +1 de espacio
-//            insertAndKeepSorted(splittedArray,key);//agrego la clave para dividir el arreglo
-//
-//            int promoted = divideArray(splittedArray,actualNode,newNode);
-//
-//            if(actualNode.isRoot){
-//                BTreeNode newRootNode = new BTreeNode(this.order,false,this); //Si el nodo era una raiz tambien necesitare otro nodo para que sea la nueva raiz
-//                this.setIsRoot(false);//dejara de ser la raiz
-//                this.setLeaf(true);//pasara a ser una hoja
-//
-//                actualNode.setRoot(newRootNode);
-//                newNode.setRoot(newRootNode);
-//
-//                newRootNode.insert(promoted);
-//                //llamada a metodo para agregar elementos al vector de puntero
-//                newRootNode.addPointer(actualNode,newNode);
-//            }else {
-//                this.root.insert(promoted);
-//                this.root.addPointer(actualNode,newNode);
+    public void traverse(int level) {
+//        if(!leaf){
+//            for(BTreeNode child : children){
+//                if (child != null){
+//                    child.traverse(level+1);
+//                    System.out.println(this);
+//                }
 //            }
 //        }
-//
-//    }
+
+
+
+
+
+
+        int i;
+        for (i = 0; i < num_keys; i++) {
+            if (!leaf) {
+                children[i].traverse(level+1);
+            }
+            System.out.print(this);
+            System.out.println("###############");
+        }
+
+        if (!leaf) {
+            children[i].traverse(level+1);
+        }
+
+    }
+
+
+
 //
 //    //si no se pudo insertar (false) es que hay que crear otro nodo
 //    private boolean insertKey(BTreeNode node, int key){
