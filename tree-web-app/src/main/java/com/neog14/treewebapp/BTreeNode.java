@@ -8,13 +8,15 @@ public class BTreeNode {
     private BTreeNode[] children;
     private int num_node;
     private int num_keys;
+    private BTreeNode parent;
 
-    public BTreeNode(boolean leaf, int order, int num_node){
+    public BTreeNode(boolean leaf, int order, int num_node, BTreeNode parent){
         this.leaf = leaf;
         this.keys = new Integer[order-1];
         this.children = new BTreeNode[order];
         this.num_keys = 0;
         this.num_node = num_node;
+        this.parent = parent;
     }
 
     public BTreeNode search_to_insert(Integer key){
@@ -26,10 +28,24 @@ public class BTreeNode {
                 return null;
             else {
                 int i = 0;
-                while (keys[i]!=null && key > keys[i]){
+                while (i<keys.length && keys[i] != null && key > keys[i]){
                     i++;
                 }
                 return children[i].search_to_insert(key);
+            }
+        }
+    }
+
+    public void print(){
+        System.out.println("Node: "+num_node+" Keys: "+Arrays.toString(keys));
+        System.out.println("Node: "+num_node+" NumKeys: "+ num_keys);
+        System.out.println("Node: "+num_node+" childrens: "+ printChildrens());
+        System.out.println("###################################################");
+        System.out.println();
+        //System.out.println("Node: "+num_node+" Childrens: "+Arrays.toString(children));
+        for (BTreeNode c : children){
+            if(c!=null){
+                c.print();
             }
         }
     }
@@ -48,11 +64,11 @@ public class BTreeNode {
                 '}'+ "\n";
     }
 
-    private String printChildrens() {
+    public String printChildrens() {
         String childString = "";
         for (BTreeNode c : children){
             if(c != null)
-                childString +=  " " + num_node;
+                childString +=  " " + c.getNum_node();
         }
         return childString;
     }
@@ -62,28 +78,44 @@ public class BTreeNode {
         while(keys[i] != null && key>keys[i]){
             i++;
         }
-        for (int j=num_keys; i>j; j--)
+        for (int j=num_keys; j>i; j--)
             keys[j] = keys[j-1];
         keys[i]=key;
         num_keys++;
-        System.out.println("Key " + key +"inserted in node: "+num_node);
+        System.out.println("Key " + key +" inserted in node: "+num_node);
     }
 
 
-    public void split_child(BTreeNode left_child, int key){
-        Integer[] aux = Arrays.copyOf(keys,num_keys+1);//copio de keys en aux con +1 de DimF
-
-        //agrego ordernado el nuevo elemento en aux
+    public int split_node(BTreeNode right_node, int key,int order){
+        Integer[] split = Arrays.copyOf(this.getKeys(),order);
+        this.num_keys=0;
+        right_node.num_keys=0;
+        Integer[] left_array = new Integer[order-1];
+        Integer[] right_array = new Integer[order-1];
+        int promoted;
+        split[order-1]=key;
+        split = Arrays.stream(split)
+                .sorted().
+                toArray(Integer[]::new);
         int i=0;
-        while(aux[i] != null && key>aux[i]){
+
+        while(i<split.length/2) {
+            left_array[i] = split[i];
             i++;
+            this.num_keys++;
         }
-        for (int j=num_keys; i>j; j--)
-            aux[j] = aux[j-1];
-        aux[i]=key;
-
-        //Logica para dividir el arreglo y promocionar la clave
-
+        promoted = split[i];
+        i++;
+        int j=0;
+        while (i<split.length){
+            right_array[j]=split[i];
+            i++;
+            j++;
+            right_node.num_keys++;
+        }
+        this.setKeys(left_array);
+        right_node.setKeys(right_array);
+        return promoted;
     }
 
     public void traverse(int level) {
@@ -153,5 +185,13 @@ public class BTreeNode {
 
     public void setNum_keys(int num_keys) {
         this.num_keys = num_keys;
+    }
+
+    public BTreeNode getParent() {
+        return parent;
+    }
+
+    public void setParent(BTreeNode parent) {
+        this.parent = parent;
     }
 }
