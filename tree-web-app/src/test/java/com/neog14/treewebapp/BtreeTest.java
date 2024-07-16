@@ -20,7 +20,16 @@ public class BtreeTest {
         bTreeOddOrder.insert(7);
         bTreeOddOrder.insert(26);
 
-        //bTreeOddOrder.insert(15);
+        bTreeOddOrder.insert(10);
+        bTreeOddOrder.insert(14);
+        bTreeOddOrder.insert(1);
+
+        //bTreeOddOrder.insert(4);
+        bTreeOddOrder.insert(12);
+        bTreeOddOrder.insert(90);
+        //bTreeOddOrder.insert(4);
+
+
 
         //bTreeOddOrder.insert(1);
 

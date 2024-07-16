@@ -31,12 +31,77 @@ public class BTree {
         root = new_root;//seteo la nueva raiz
         num_nodes++;
         new_root.insert_non_full(promoted);//agrego el elemento promocionado a la nueva raiz
-        node_to_insert.setLeaf(true);//la vieja raiz pasa a ser hoja
+       // node_to_insert.setLeaf(true);//la vieja raiz pasa a ser hoja
         //hago los enlaces en la nueva raiz y seteo al padre
-        node_to_insert.setParent(root);
-        new_node.setParent(root);
+        node_to_insert.setParent(new_root);
+        new_node.setParent(new_root);
         new_root.getChildren()[0]=node_to_insert;
         new_root.getChildren()[1]=new_node;
+
+    }
+
+    private void realocate_parent_childs(BTreeNode parent, BTreeNode new_parent, BTreeNode node_to_insert, BTreeNode new_node){
+        BTreeNode[] child_to_split = new BTreeNode[order+1];
+        BTreeNode[] childs_parent = new BTreeNode[order];
+        BTreeNode[] childs_new_parent = new BTreeNode[order];
+        int i = 0;
+        while (node_to_insert.getNum_node() != parent.getChildren()[i].getNum_node()){
+            i++;
+        }
+        int j = 0;
+        while(j<child_to_split.length){
+            if(j<=i)
+                child_to_split[j]=parent.getChildren()[j];
+            else if (j==i+1)
+                child_to_split[j]=new_node;
+            else
+                child_to_split[j]=parent.getChildren()[j-1];
+            j++;
+        }
+
+        i=0;
+        j=0;
+        while(i<child_to_split.length){
+
+            if(i<child_to_split.length/2){
+                childs_parent[i]=child_to_split[i];
+            }else {
+                if(i==child_to_split.length/2 && child_to_split.length%2==0){
+                    childs_new_parent[j]=child_to_split[i];
+                    j++;
+                } else if (i==child_to_split.length/2 && child_to_split.length%2!=0) {
+                    childs_parent[i]=child_to_split[i];
+                }else {
+                    childs_new_parent[j]=child_to_split[i];
+                    j++;
+                }
+            }
+            i++;
+        }
+        parent.setChildren(childs_parent);
+        new_parent.setChildren(childs_new_parent);
+
+
+//        for (int j=0; j<=i; j++){
+//            child_to_split[j]=parent.getChildren()[j];
+//        }
+
+
+//        BTreeNode[] parent_child_copy = parent.getChildren().clone();
+//        BTreeNode[] parent_childs = new BTreeNode[order];
+//        for (int j=0;j<i;j++){
+//            parent_childs[j]=parent_child_copy[j];
+//        }
+//        if(parent_child_copy[i].getKeys()[0]>new_node.getKeys()[0]){
+//            if(parent.getKeys()[i-1]<new_node.getKeys()[0]){
+//                parent_childs[i]=new_node;
+//            }
+//        }
+//
+//        for (int j=i;j<parent_child_copy.length;j++){
+//            new_parent.getChildren()[j]=parent_child_copy[j];
+//        }
+//        parent.setChildren(parent_childs);
     }
 
     public void insert_on_parent(int key, BTreeNode node_to_insert, BTreeNode new_node){
@@ -45,31 +110,40 @@ public class BTree {
         if (parent == root){
             if (!parent.full(max_keys)){
                 parent.insert_non_full(key);
+                int i = 0;
+                while(i<parent.getNum_keys()){
+                    if (parent.getKeys()[i]>new_node.getKeys()[0]){
+                        aux = parent.getChildren()[i];
+                        parent.getChildren()[i] = new_node;
+                        new_node.setParent(parent);
+                    }
+                    i++;
+                }
+                if(aux!=null){
+                    parent.getChildren()[i]=aux;
+                    aux.setParent(parent);
+                } else{
+                    parent.getChildren()[i]=new_node;
+                    new_node.setParent(parent);
+                }
+
             }else {
-                BTreeNode new_parent = new BTreeNode(true,order,num_nodes,null);
+                BTreeNode new_parent = new BTreeNode(false,order,num_nodes,null);
                 num_nodes++;
                 int promoted= parent.split_node(new_parent,key,order);
+                realocate_parent_childs(parent,new_parent,node_to_insert,new_node);
                 insert_on_root(promoted,parent,new_parent);
-            }
+                }
 
+                //insert_on_root(promoted,parent,new_parent);
         }
-        //revisar
-        int i = 0;
-        while(i<parent.getNum_keys()){
-            if (parent.getKeys()[i]>new_node.getKeys()[0]){
-                aux = parent.getChildren()[i];
-                parent.getChildren()[i] = new_node;
-            }
-            i++;
-        }
-        if(aux!=null)
-            parent.getChildren()[i]=aux;
-        else
-            parent.getChildren()[i]=new_node;
+
     }
+
 
     public void insert(int key) {
         BTreeNode node_to_insert = root.search_to_insert(key);
+        System.out.println("Key: "+key+"node to insert: "+node_to_insert.getNum_node()+"leaf: "+node_to_insert.isLeaf());
         if (node_to_insert != null) {
             if(!node_to_insert.full(max_keys)){ //no esta lleno
                 node_to_insert.insert_non_full(key);
@@ -81,7 +155,7 @@ public class BTree {
                     insert_on_root(promoted,node_to_insert,new_node);
                 }else {
                     insert_on_parent(promoted,node_to_insert,new_node);
-                    }
+                }
             }
         }
     }
@@ -163,3 +237,4 @@ public class BTree {
         this.num_nodes = num_nodes;
     }
 }
+
