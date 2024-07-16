@@ -13,16 +13,16 @@ public class BtreeTest {
 
     @Test
     public void testInsert(){
-        bTreeOddOrder.insert(5);
         bTreeOddOrder.insert(3);
+        bTreeOddOrder.insert(25);
+        bTreeOddOrder.insert(16);
 
-        bTreeOddOrder.insert(9);
-        bTreeOddOrder.insert(14);
-        bTreeOddOrder.insert(4);
+        bTreeOddOrder.insert(7);
+        bTreeOddOrder.insert(26);
 
-        bTreeOddOrder.insert(15);
+        //bTreeOddOrder.insert(15);
 
-        bTreeOddOrder.insert(1);
+        //bTreeOddOrder.insert(1);
 
 
         bTreeOddOrder.print_tree();

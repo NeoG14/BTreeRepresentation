@@ -54,7 +54,7 @@ public class BTree {
 
         }
         //revisar
-        int i = 1;
+        int i = 0;
         while(i<parent.getNum_keys()){
             if (parent.getKeys()[i]>new_node.getKeys()[0]){
                 aux = parent.getChildren()[i];
@@ -74,42 +74,14 @@ public class BTree {
             if(!node_to_insert.full(max_keys)){ //no esta lleno
                 node_to_insert.insert_non_full(key);
             }else {
-                //if(node_to_insert.full(max_keys)){
                 BTreeNode new_node = new BTreeNode(true,order,num_nodes,null);
                 num_nodes++;
                 int promoted = node_to_insert.split_node(new_node,key,order);
                 if (node_to_insert == root){// si el nodo que se dividio era la raiz
                     insert_on_root(promoted,node_to_insert,new_node);
-//                    BTreeNode new_root = new BTreeNode(false,order,num_nodes,null);//creo la nueva raiz
-//                    root = new_root;//seteo la nueva raiz
-//                    num_nodes++;
-//                    new_root.insert_non_full(promoted);//agrego el elemento promocionado a la nueva raiz
-//                    node_to_insert.setLeaf(true);//la vieja raiz pasa a ser hoja
-//                    //hago los enlaces en la nueva raiz y seteo al padre
-//                    node_to_insert.setParent(root);
-//                    new_node.setParent(root);
-//                    new_root.getChildren()[0]=node_to_insert;
-//                    new_root.getChildren()[1]=new_node;
                 }else {
                     insert_on_parent(promoted,node_to_insert,new_node);
-//                    BTreeNode parent = node_to_insert.getParent();
-//                    BTreeNode aux = null;
-//                    if (!parent.full(max_keys)){
-//                        parent.insert_non_full(promoted);
-//                        int i = 1;
-//                        while(i<parent.getNum_keys()){
-//                            if (parent.getKeys()[i]>new_node.getKeys()[0]){
-//                                aux = parent.getChildren()[i];
-//                                parent.getChildren()[i] = new_node;
-//                            }
-//                            i++;
-//                        }
-//                        if(aux!=null)
-//                            parent.getChildren()[i]=aux;
-//                        else
-//                            parent.getChildren()[i]=new_node;
                     }
-                //}
             }
         }
     }
