@@ -49,7 +49,7 @@ public class BTreeNode {
         }
     }
 
-    public boolean full(int max_keys){
+    public boolean isFull(int max_keys){
         return (max_keys==num_keys);
     }
 
@@ -67,12 +67,12 @@ public class BTreeNode {
         String childString = "";
         for (BTreeNode c : children){
             if(c != null)
-                childString +=  " " + c.getNum_node();
+                childString += " " + c.getNum_node();
         }
         return childString;
     }
 
-    public void insert_non_full(Integer key){
+    public void insert_and_sort(Integer key){
         int i = 0;
         while(keys[i] != null && key>keys[i]){
             i++;
@@ -83,11 +83,6 @@ public class BTreeNode {
         num_keys++;
         System.out.println("Key " + key +" inserted in node: "+num_node);
     }
-
-
-
-
-
 
     public int split_node(BTreeNode right_node, int key,int order){
         Integer[] split = Arrays.copyOf(this.getKeys(),order);
@@ -119,34 +114,6 @@ public class BTreeNode {
         this.setKeys(left_array);
         right_node.setKeys(right_array);
         return promoted;
-    }
-
-    public void traverse(int level) {
-//        if(!leaf){
-//            for(BTreeNode child : children){
-//                if (child != null){
-//                    child.traverse(level+1);
-//                    System.out.println(this);
-//                }
-//            }
-//        }
-
-
-
-
-        int i;
-        for (i = 0; i < num_keys; i++) {
-            if (!leaf) {
-                children[i].traverse(level+1);
-            }
-            System.out.print(this);
-            System.out.println("###############");
-        }
-
-        if (!leaf) {
-            children[i].traverse(level+1);
-        }
-
     }
 
 

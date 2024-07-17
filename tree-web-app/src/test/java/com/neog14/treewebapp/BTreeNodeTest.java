@@ -21,10 +21,10 @@ public class BTreeNodeTest {
 
 //    @Test
 //    public void  test_insert_not_fullOdd(){
-//        nodeOddOrder.insert_non_full(4);
-//        nodeOddOrder.insert_non_full(1);
-//        nodeOddOrder.insert_non_full(12);
-//        nodeOddOrder.insert_non_full(9);
+//        nodeOddOrder.insert_and_sort(4);
+//        nodeOddOrder.insert_and_sort(1);
+//        nodeOddOrder.insert_and_sort(12);
+//        nodeOddOrder.insert_and_sort(9);
 //
 //        BTreeNode right_node = new BTreeNode(true,5,1);
 //
@@ -41,11 +41,11 @@ public class BTreeNodeTest {
 
 //    @Test
 //    public void  test_insert_not_fullEven(){
-//        nodeEvenOrder.insert_non_full(13);
-//        nodeEvenOrder.insert_non_full(4);
-//        nodeEvenOrder.insert_non_full(1);
-//        nodeEvenOrder.insert_non_full(12);
-//        nodeEvenOrder.insert_non_full(9);
+//        nodeEvenOrder.insert_and_sort(13);
+//        nodeEvenOrder.insert_and_sort(4);
+//        nodeEvenOrder.insert_and_sort(1);
+//        nodeEvenOrder.insert_and_sort(12);
+//        nodeEvenOrder.insert_and_sort(9);
 //
 //        BTreeNode right_node = new BTreeNode(true,6,1);
 //
@@ -63,26 +63,26 @@ public class BTreeNodeTest {
 //    @Test
 //    public void test_search_to_insert(){
 //        BTreeNode node0 = new BTreeNode(true,4,0);
-//        node0.insert_non_full(4);
-//        node0.insert_non_full(5);
+//        node0.insert_and_sort(4);
+//        node0.insert_and_sort(5);
 //
 //        BTreeNode node1 = new BTreeNode(true,4,1);
-//        node1.insert_non_full(14);
-//        node1.insert_non_full(15);
+//        node1.insert_and_sort(14);
+//        node1.insert_and_sort(15);
 //
 //        BTreeNode node3 = new BTreeNode(true,4,3);
-//        node3.insert_non_full(30);
-//        node3.insert_non_full(35);
+//        node3.insert_and_sort(30);
+//        node3.insert_and_sort(35);
 //
 //        BTreeNode node4 = new BTreeNode(true,4,4);
-//        node4.insert_non_full(79);
-//        node4.insert_non_full(87);
+//        node4.insert_and_sort(79);
+//        node4.insert_and_sort(87);
 //
 //
 //        BTreeNode root_node = new BTreeNode(false,4,2);
-//        root_node.insert_non_full(10);
-//        root_node.insert_non_full(20);
-//        root_node.insert_non_full(50);
+//        root_node.insert_and_sort(10);
+//        root_node.insert_and_sort(20);
+//        root_node.insert_and_sort(50);
 //        root_node.getChildren()[0] = node0;
 //        root_node.getChildren()[1] = node1;
 //        root_node.getChildren()[2] = node3;
