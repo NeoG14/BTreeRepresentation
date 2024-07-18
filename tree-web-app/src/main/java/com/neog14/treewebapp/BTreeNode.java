@@ -41,7 +41,6 @@ public class BTreeNode {
         System.out.println("Node: "+num_node+" NumKeys: "+ num_keys);
         System.out.println("Node: "+num_node+" childrens: "+ printChildrens());
         System.out.println("###################################################");
-        //System.out.println("Node: "+num_node+" Childrens: "+Arrays.toString(children));
         for (BTreeNode c : children){
             if(c!=null){
                 c.print();
