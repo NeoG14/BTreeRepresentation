@@ -1,6 +1,8 @@
 package com.neog14.treewebapp;
 
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class BTreeNode {
     private boolean leaf;
@@ -36,14 +38,33 @@ public class BTreeNode {
         }
     }
 
-    public void print(){
-        System.out.println("Node: "+num_node+" Keys: "+Arrays.toString(keys));
-        System.out.println("Node: "+num_node+" NumKeys: "+ num_keys);
-        System.out.println("Node: "+num_node+" childrens: "+ printChildrens());
+    private void print_node_info(BTreeNode node){
+        System.out.println("Node: "+node.getNum_node()+" Keys: "+Arrays.toString(node.getKeys()));
+        System.out.println("Node: "+node.getNum_node()+" NumKeys: "+ node.getNum_keys());
+        System.out.println("Node: "+node.getNum_node()+" childrens: "+ node.printChildrens());
         System.out.println("###################################################");
+    }
+
+    public void printDFS(){
+        print_node_info(this);
         for (BTreeNode c : children){
             if(c!=null){
-                c.print();
+                c.printDFS();
+            }
+        }
+    }
+
+    public void printBFS(){
+        Queue<BTreeNode> cola = new LinkedList<>();
+        cola.add(this);
+
+        while (!cola.isEmpty()) {
+            BTreeNode node = cola.poll();
+            if(node !=null){
+                print_node_info(node);
+                for (BTreeNode hijo: node.getChildren()){
+                    cola.add(hijo);
+                }
             }
         }
     }

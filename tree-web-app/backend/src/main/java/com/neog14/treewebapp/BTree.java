@@ -17,9 +17,15 @@ public class BTree {
         num_nodes = 1;
     }
 
-    public void print_tree() {
+    public void print_treeDFS() {
         if (root != null) {
-            root.print();
+            root.printDFS();
+        }
+    }
+
+    public void print_treeBFS() {
+        if (root != null) {
+            root.printBFS();
         }
     }
 
@@ -87,50 +93,8 @@ public class BTree {
     // realocated
     private void realocate_parent_childs(BTreeNode parent, BTreeNode new_parent, BTreeNode node_to_insert,
             BTreeNode new_node) {
-        // BTreeNode[] child_to_split = new BTreeNode[order+1];
-        // BTreeNode[] childs_parent = new BTreeNode[order];
-        // BTreeNode[] childs_new_parent = new BTreeNode[order];
         BTreeNode[] child_to_split = split_parent_child(parent, node_to_insert, new_node);
         realocate_children(child_to_split, parent, new_parent);
-        // int i = 0;
-        // while (node_to_insert.getNum_node() !=
-        // parent.getChildren()[i].getNum_node()){
-        // i++;
-        // }
-        // int j = 0;
-        // while(j<child_to_split.length){
-        // if(j<=i)
-        // child_to_split[j]=parent.getChildren()[j];
-        // else if (j==i+1)
-        // child_to_split[j]=new_node;
-        // else
-        // child_to_split[j]=parent.getChildren()[j-1];
-        // j++;
-        // }
-        // i=0;
-        // j=0;
-        // while(i<child_to_split.length){
-        // if(i<child_to_split.length/2){
-        // childs_parent[i]=child_to_split[i];
-        // child_to_split[i].setParent(parent);
-        // }else {
-        // if(i==child_to_split.length/2 && child_to_split.length%2==0){
-        // childs_new_parent[j]=child_to_split[i];
-        // child_to_split[i].setParent(new_parent);
-        // j++;
-        // } else if (i==child_to_split.length/2 && child_to_split.length%2!=0) {
-        // childs_parent[i]=child_to_split[i];
-        // child_to_split[i].setParent(parent);
-        // }else {
-        // childs_new_parent[j]=child_to_split[i];
-        // child_to_split[i].setParent(new_parent);
-        // j++;
-        // }
-        // }
-        // i++;
-        // }
-        // parent.setChildren(childs_parent);
-        // new_parent.setChildren(childs_new_parent);
     }
 
     // this executes when a parent add a new key but is no divided so the pointer
@@ -157,28 +121,11 @@ public class BTree {
 
     public void insert_on_parent(int key, BTreeNode node_to_insert, BTreeNode new_node) {
         BTreeNode parent = node_to_insert.getParent();
-        BTreeNode aux = null;
         if (parent.isFull(max_keys)) {
             insert_non_terminal(key, parent, node_to_insert, new_node);
         } else {
             parent.insert_and_sort(key);
             realocate_pointers(parent, new_node);
-            // int i = 0;
-            // while(i<parent.getNum_keys()){
-            // if (parent.getKeys()[i]>new_node.getKeys()[0]){
-            // aux = parent.getChildren()[i];
-            // parent.getChildren()[i] = new_node;
-            // new_node.setParent(parent);
-            // }
-            // i++;
-            // }
-            // if(aux!=null){
-            // parent.getChildren()[i]=aux;
-            // aux.setParent(parent);
-            // } else{
-            // parent.getChildren()[i]=new_node;
-            // new_node.setParent(parent);
-            // }
         }
     }
 
